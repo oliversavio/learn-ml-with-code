@@ -24,3 +24,18 @@ func TestLossFunctionWithValues(t *testing.T) {
 		t.Error("Incorrect value, 23.9751 was expected")
 	}
 }
+
+func TestModelFuncF(t *testing.T) {
+	in := []float64{1., 2., 3.}
+	p := &params{m: 1., c: 1.}
+
+	actuals := f(in, p)
+
+	for i, a := range actuals {
+		expected := (p.m * float64(i+1.)) + p.c
+		if a != float64(expected) {
+			t.Error("Model function not as expected mx + c")
+		}
+	}
+
+}
