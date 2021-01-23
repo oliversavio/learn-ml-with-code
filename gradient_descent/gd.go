@@ -30,7 +30,7 @@ func f(x []float64, p *params) []float64 {
 }
 
 // MSE or Mean Squared Error
-func costFunction(actuals []float64, predictions []float64) float64 {
+func costFunction(predictions []float64) float64 {
 	var diff float64
 	for i := range actuals {
 		d := predictions[i] - actuals[i]
@@ -40,20 +40,20 @@ func costFunction(actuals []float64, predictions []float64) float64 {
 	return loss
 }
 
-func calcGradientM(input []float64, actual []float64, predicted []float64) float64 {
+func calcGradientM(predicted []float64) float64 {
 	var diff float64
-	for i, x := range input {
-		diff += (predicted[i] - actual[i]) * x
+	for i, x := range input_x {
+		diff += (predicted[i] - actuals[i]) * x
 	}
-	return (diff / float64(len(input))) * 2
+	return (diff / float64(len(input_x))) * 2
 }
 
-func calcGradientC(actual []float64, predicted []float64) float64 {
+func calcGradientC(predicted []float64) float64 {
 	var diff float64
-	for i := range actual {
-		diff += (predicted[i] - actual[i])
+	for i := range actuals {
+		diff += (predicted[i] - actuals[i])
 	}
-	return (diff / float64(len(actual))) * 2
+	return (diff / float64(len(actuals))) * 2
 }
 
 func updateParams(p *params, gradientM float64, gradientC float64) {
@@ -61,13 +61,23 @@ func updateParams(p *params, gradientM float64, gradientC float64) {
 	p.c -= lr * gradientC
 }
 
+func calculateLoss(x []float64, p *params) (loss float64, predicted []float64) {
+	predicted = f(x, p)
+	loss = costFunction(predicted)
+	return
+}
+
+func calculateGradients(predicted []float64) (gradM float64, gradC float64) {
+	gradM = calcGradientM(predicted)
+	gradC = calcGradientC(predicted)
+	return
+}
+
 func fit(p *params) {
-	preds := f(input_x, p)
-	loss := costFunction(actuals, preds)
+	loss, preds := calculateLoss(input_x, p)
 	fmt.Printf("Loss: %f m: %f c:%f", loss, p.m, p.c)
 	fmt.Println()
-	gradM := calcGradientM(input_x, actuals, preds)
-	gradC := calcGradientC(actuals, preds)
+	gradM, gradC := calculateGradients(preds)
 	updateParams(p, gradM, gradC)
 }
 
