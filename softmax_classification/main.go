@@ -6,21 +6,23 @@ import "math"
 import "math/rand"
 
 func main() {
-	rand.Seed(350)
+	SimpleNN()
+	fmt.Println()
+	SoftmaxNN()
+}
+
+func SimpleNN() {
 	nn := linear()
 	fmt.Println("Activation after linear layer")
 	fmt.Println(mat.Formatted(nn))
+}
 
+func SoftmaxNN() {
+	nn := linear()
 	nnsmax := softmax(nn)
+
 	fmt.Println("Activation after softmax layer")
 	fmt.Println(mat.Formatted(nnsmax))
-
-	var ressum float64
-	for _, v := range nnsmax.RawMatrix().Data {
-		ressum += v
-	}
-
-	fmt.Println(ressum)
 }
 
 func initRandomMatrix(row int, col int) *mat.Dense {
